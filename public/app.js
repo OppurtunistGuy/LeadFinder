@@ -104,8 +104,6 @@ form.addEventListener("submit", async (e) => {
 (async function init() {
   const cfg = await (await fetch("/api/config")).json();
   for (const c of cfg.countries) countrySel.append(el("option", { value: c, textContent: c }));
-  $("hint").textContent = cfg.hasKey
-    ? "Live research is on. Any niche works."
-    : "Live research is off (no API key yet). Sample niches available: supplements, skincare, pet.";
+  $("hint").textContent = "Free mode. Researched niches: supplements, skincare, pet. For a new niche, ask Claude to research it.";
   loadHistory();
 })();

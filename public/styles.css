@@ -109,3 +109,11 @@ button[disabled] { opacity: .6; cursor: progress; }
 }
 .history small { display: block; color: var(--muted); font-weight: 400; }
 .muted { color: var(--muted); font-size: 14px; }
+
+.score { margin: 8px 0 0; display: grid; gap: 6px; }
+.pill { display: inline-block; justify-self: start; font-weight: 700; font-size: 14px; padding: 3px 12px; border-radius: 999px; }
+.pill.good { background: var(--accent); color: var(--accent-ink); }
+.pill.ok { background: var(--warn-bg); color: var(--warn-ink); }
+.pill.low { border: 1px solid var(--line); color: var(--muted); }
+.score summary { cursor: pointer; font-size: 14px; color: var(--accent); }
+.why { margin: 8px 0 0; padding-left: 18px; font-size: 14px; display: grid; gap: 4px; }

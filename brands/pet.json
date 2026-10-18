@@ -1,0 +1,115 @@
+{
+  "niche": "pet",
+  "researched": "2026-10-18",
+  "note": "Names and domains come from the linked public lists. Company size is not verified.",
+  "brands": [
+    {
+      "name": "Jinx",
+      "domain": "thinkjinx.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-dtc-pet-brands"
+    },
+    {
+      "name": "Wild One",
+      "domain": "wildone.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-dtc-pet-brands"
+    },
+    {
+      "name": "Fable",
+      "domain": "fablepets.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-dtc-pet-brands"
+    },
+    {
+      "name": "Diggs",
+      "domain": "diggs.pet",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-dtc-pet-brands"
+    },
+    {
+      "name": "Tuft + Paw",
+      "domain": "tuftandpaw.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-dtc-pet-brands"
+    },
+    {
+      "name": "Maxbone",
+      "domain": "maxbone.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-dtc-pet-brands"
+    },
+    {
+      "name": "Only Natural Pet",
+      "domain": "onlynaturalpet.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-dtc-pet-brands"
+    },
+    {
+      "name": "Ollie",
+      "domain": "ollie.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-dtc-pet-brands"
+    },
+    {
+      "name": "Veganapf",
+      "domain": "veganapf.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/tierbedarf/tierfutter/?page=8"
+    },
+    {
+      "name": "Felifine",
+      "domain": "felifine.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/tierbedarf/tierfutter/?page=8"
+    },
+    {
+      "name": "Canelis",
+      "domain": "canelis.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/tierbedarf/tierfutter/?page=8"
+    },
+    {
+      "name": "Tierliebe",
+      "domain": "tierliebe.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/tierbedarf/tierfutter/?page=8"
+    },
+    {
+      "name": "Best Pet Foods",
+      "domain": "bestpetfoods.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/tierbedarf/tierfutter/?page=8"
+    },
+    {
+      "name": "Hempetito",
+      "domain": "hempetito.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/tierbedarf/tierfutter/?page=8"
+    },
+    {
+      "name": "Zabello",
+      "domain": "zabello.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/tierbedarf/tierfutter/?page=8"
+    },
+    {
+      "name": "Barf Hund Gesund",
+      "domain": "barfhundgesund.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/tierbedarf/tierfutter/?page=8"
+    },
+    {
+      "name": "Bio-Tierkost",
+      "domain": "bio-tierkost.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/tierbedarf/tierfutter/?page=8"
+    },
+    {
+      "name": "Dorfner Mühle",
+      "domain": "dorfner-muehle.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/tierbedarf/tierfutter/?page=8"
+    }
+  ]
+}

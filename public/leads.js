@@ -2,7 +2,6 @@ const $ = (id) => document.getElementById(id);
 const form = $("form");
 const nicheInput = $("niche");
 const countrySel = $("country");
-const kindSel = $("kind");
 const goBtn = $("go");
 const hintEl = $("hint");
 const msgEl = $("msg");
@@ -12,10 +11,10 @@ const emptyEl = $("empty");
 const countEl = $("count");
 const filterSel = $("filter");
 
-let cfg = { statuses: [], metaCountries: [], hasKey: false, hasMeta: false, demo: false };
+let cfg = { statuses: [], coverage: {}, demo: false };
 let leads = [];
 
-const SOURCE_LABEL = { meta: "Meta ads", hiring: "Hiring post", demo: "DEMO" };
+const SOURCE_LABEL = { site: "Website check", demo: "DEMO" };
 
 function setMsg(text, isError = false) {
   errorEl.hidden = !(isError && text);
@@ -24,13 +23,22 @@ function setMsg(text, isError = false) {
 }
 
 function updateHint() {
-  const meta = kindSel.value === "meta";
-  const parts = [];
-  if (cfg.demo) { hintEl.textContent = "DEMO MODE: results are made-up examples for testing only."; return; }
-  if (meta && !cfg.metaCountries.includes(countrySel.value)) parts.push(`The free Meta data does not cover ${countrySel.value}. Use Hiring posts, or pick Germany, United Kingdom or Europe.`);
-  else if (meta && !cfg.hasMeta) parts.push("Add your Meta token to the .env file to use this (see .env.example).");
-  else if (!meta && !cfg.hasKey) parts.push("Add ANTHROPIC_API_KEY to the .env file to search live.");
-  hintEl.textContent = parts.join(" ");
+  if (cfg.demo) { hintEl.textContent = "DEMO MODE: made-up brands for testing only."; return; }
+  const ready = cfg.coverage[nicheInput.value] || [];
+  hintEl.textContent = ready.includes(countrySel.value) || (countrySel.value === "Europe" && ready.includes("Germany"))
+    ? "Opens each brand's public website once and scores it. Takes about half a minute."
+    : `No brands researched for ${countrySel.value} in this niche yet. Ready: ${ready.join(", ") || "none"}.`;
+}
+
+function scoreBlock(l) {
+  if (l.score == null) return el("p", { class: "muted", textContent: "Not scored. " + l.signal });
+  const tone = l.score >= 5 ? "good" : l.score >= 3 ? "ok" : "low";
+  const rows = (l.reasons || []).map((r) => el("li", {},
+    el("b", { textContent: `${r.points}/${r.max} ${r.label}. ` }),
+    el("span", { textContent: r.note })));
+  return el("div", { class: "score" },
+    el("span", { class: `pill ${tone}`, textContent: `${l.score}/${l.scoreMax}` }),
+    el("details", {}, el("summary", { textContent: "Why this score" }), el("ul", { class: "why" }, ...rows)));
 }
 
 function card(l) {
@@ -50,22 +58,23 @@ function card(l) {
       el("span", { class: l.source === "demo" ? "badge sample" : "badge", textContent: SOURCE_LABEL[l.source] || l.source }),
       el("span", { class: "badge", textContent: l.country }),
       el("span", { class: "badge", textContent: `Found ${new Date(l.foundAt).toLocaleDateString()}` })),
-    el("p", { class: "signal", textContent: l.signal })
+    el("p", { class: "signal", textContent: l.signal }),
+    scoreBlock(l)
   ];
+  if (l.contact) parts.push(el("p", { class: "muted", textContent: `Public contact: ${l.contact}` }));
   if (l.sample) parts.push(el("p", { class: "muted", textContent: l.sample }));
-  if (l.source === "hiring") parts.push(el("p", { class: "muted", textContent: "Check the posting is still open before reaching out." }));
   if (links.length) parts.push(el("p", { class: "links" }, ...links.flatMap((e, i) => [i ? " · " : "", el("a", { href: e.url, textContent: e.label })])));
   return el("article", { class: "card lead" }, ...parts);
 }
 
 function renderList() {
   const f = filterSel.value;
-  const shown = leads.filter((l) => f === "all" || l.status === f);
+  const shown = leads.filter((l) => f === "all" || l.status === f).sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
   listEl.replaceChildren(...shown.map(card));
   const fresh = leads.filter((l) => l.status === "new").length;
   countEl.textContent = leads.length ? `${leads.length} lead${leads.length === 1 ? "" : "s"} · ${fresh} new` : "Leads";
   emptyEl.hidden = shown.length > 0;
-  emptyEl.textContent = leads.length ? "No leads with this status." : "No leads yet. Pick a niche above and press Find leads.";
+  emptyEl.textContent = leads.length ? "No leads with this status." : "No leads yet. Pick a niche above and press Check brands.";
 }
 
 async function load() {
@@ -77,30 +86,31 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   setMsg("");
   goBtn.disabled = true;
-  goBtn.textContent = "Searching...";
+  goBtn.textContent = "Checking...";
   try {
     const res = await fetch("/api/scout", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ kind: kindSel.value, niche: nicheInput.value, country: countrySel.value })
+      body: JSON.stringify({ niche: nicheInput.value, country: countrySel.value })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Something went wrong.");
-    setMsg(data.found === 0 ? "Nothing found this time. Try a broader niche or another country." : `Found ${data.found}. Added ${data.added} new, skipped ${data.duplicates} already in your list.`);
+    setMsg(`Checked ${data.found}. ${data.added} new, ${data.updated} refreshed${data.unreachable ? `, ${data.unreachable} could not be checked` : ""}.`);
     await load();
   } catch (err) {
     setMsg(err.message, true);
   } finally {
     goBtn.disabled = false;
-    goBtn.textContent = "Find leads";
+    goBtn.textContent = "Check brands";
   }
 });
 
-for (const s of [kindSel, countrySel]) s.addEventListener("change", updateHint);
+for (const s of [nicheInput, countrySel]) s.addEventListener("change", updateHint);
 filterSel.addEventListener("change", renderList);
 
 (async function init() {
   cfg = await (await fetch("/api/config")).json();
+  for (const n of Object.keys(cfg.coverage)) nicheInput.append(el("option", { value: n, textContent: n }));
   for (const c of cfg.countries) countrySel.append(el("option", { value: c, textContent: c }));
   filterSel.append(el("option", { value: "all", textContent: "All statuses" }));
   for (const s of cfg.statuses) filterSel.append(el("option", { value: s, textContent: s }));

@@ -1,0 +1,109 @@
+{
+  "niche": "skincare",
+  "researched": "2026-10-18",
+  "note": "Names and domains come from the linked public lists. Company size is not verified.",
+  "brands": [
+    {
+      "name": "ILIA",
+      "domain": "iliabeauty.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-dtc-beauty-brands"
+    },
+    {
+      "name": "Tower 28",
+      "domain": "tower28beauty.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-dtc-beauty-brands"
+    },
+    {
+      "name": "Merit",
+      "domain": "meritbeauty.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-dtc-beauty-brands"
+    },
+    {
+      "name": "Phlur",
+      "domain": "phlur.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-dtc-beauty-brands"
+    },
+    {
+      "name": "Danessa Myricks Beauty",
+      "domain": "danessamyricksbeauty.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-dtc-beauty-brands"
+    },
+    {
+      "name": "Dossier",
+      "domain": "dossier.co",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-dtc-beauty-brands"
+    },
+    {
+      "name": "Kosas",
+      "domain": "kosas.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-dtc-beauty-brands"
+    },
+    {
+      "name": "Tausendkraut",
+      "domain": "tausendkraut.com",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/drogerieartikel_kosmetik/naturkosmetik/?page=3"
+    },
+    {
+      "name": "Lüttje Seep",
+      "domain": "luettjeseep.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/drogerieartikel_kosmetik/naturkosmetik/?page=3"
+    },
+    {
+      "name": "Vujo",
+      "domain": "vujo.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/drogerieartikel_kosmetik/naturkosmetik/?page=3"
+    },
+    {
+      "name": "Paos",
+      "domain": "paos.shop",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/drogerieartikel_kosmetik/naturkosmetik/?page=3"
+    },
+    {
+      "name": "Remmele Propolis",
+      "domain": "remmele-propolis.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/drogerieartikel_kosmetik/naturkosmetik/?page=3"
+    },
+    {
+      "name": "Valeria & Viktor",
+      "domain": "valeriaandviktor.com",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/drogerieartikel_kosmetik/naturkosmetik/?page=3"
+    },
+    {
+      "name": "Tesana",
+      "domain": "tesana.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/drogerieartikel_kosmetik/naturkosmetik/?page=3"
+    },
+    {
+      "name": "Kräuterhaus Klocke",
+      "domain": "kraeuterhaus-klocke.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/drogerieartikel_kosmetik/naturkosmetik/?page=3"
+    },
+    {
+      "name": "Curantus",
+      "domain": "curantus.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/drogerieartikel_kosmetik/naturkosmetik/?page=3"
+    },
+    {
+      "name": "Herbathek",
+      "domain": "herbathek.com",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/drogerieartikel_kosmetik/naturkosmetik/?page=3"
+    }
+  ]
+}

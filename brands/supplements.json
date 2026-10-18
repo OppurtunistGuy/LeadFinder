@@ -1,0 +1,109 @@
+{
+  "niche": "supplements",
+  "researched": "2026-10-18",
+  "note": "Names and domains come from the linked public lists. Company size is not verified.",
+  "brands": [
+    {
+      "name": "Obvi",
+      "domain": "myobvi.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-supplement-brands-shopify"
+    },
+    {
+      "name": "Transparent Labs",
+      "domain": "transparentlabs.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-supplement-brands-shopify"
+    },
+    {
+      "name": "Legion Athletics",
+      "domain": "legionathletics.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-supplement-brands-shopify"
+    },
+    {
+      "name": "Momentous",
+      "domain": "livemomentous.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-supplement-brands-shopify"
+    },
+    {
+      "name": "BUBS Naturals",
+      "domain": "bubsnaturals.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-supplement-brands-shopify"
+    },
+    {
+      "name": "MaryRuth Organics",
+      "domain": "maryruthorganics.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-supplement-brands-shopify"
+    },
+    {
+      "name": "1st Phorm",
+      "domain": "1stphorm.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-supplement-brands-shopify"
+    },
+    {
+      "name": "Seed",
+      "domain": "seed.com",
+      "country": "United States",
+      "source": "https://www.ringly.io/discover/best-supplement-brands-shopify"
+    },
+    {
+      "name": "galvitamin",
+      "domain": "galvitamin.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/medikamente/nahrungsergaenzungsmittel/?page=4"
+    },
+    {
+      "name": "DNatural",
+      "domain": "dnatural.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/medikamente/nahrungsergaenzungsmittel/?page=4"
+    },
+    {
+      "name": "Dr. Hall",
+      "domain": "drhall.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/medikamente/nahrungsergaenzungsmittel/?page=4"
+    },
+    {
+      "name": "EnergiaVital",
+      "domain": "energiavital.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/medikamente/nahrungsergaenzungsmittel/?page=4"
+    },
+    {
+      "name": "Lactopia",
+      "domain": "shop.lactopia.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/medikamente/nahrungsergaenzungsmittel/?page=4"
+    },
+    {
+      "name": "Daminoc",
+      "domain": "daminoc.com",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/medikamente/nahrungsergaenzungsmittel/?page=4"
+    },
+    {
+      "name": "Ventalis",
+      "domain": "ventalis-shop.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/medikamente/nahrungsergaenzungsmittel/?page=4"
+    },
+    {
+      "name": "NOZONO",
+      "domain": "nozono.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/medikamente/nahrungsergaenzungsmittel/?page=4"
+    },
+    {
+      "name": "Unsere kleine Apotheke",
+      "domain": "unserekleineapotheke.de",
+      "country": "Germany",
+      "source": "https://www.trustedshops.de/shops/medikamente/nahrungsergaenzungsmittel/?page=4"
+    }
+  ]
+}

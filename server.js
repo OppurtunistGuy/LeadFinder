@@ -5,92 +5,20 @@ import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { COUNTRIES, findSeed } from "./seed.js";
 import { addLeads, readLeads, updateLead, STATUSES } from "./lib/leads.js";
-import { scoutMeta, META_COUNTRIES } from "./lib/meta.js";
-import { scoutHiring } from "./lib/hiring.js";
-import { ScoutError } from "./lib/errors.js";
+import { brandsFor, coverage } from "./lib/brands.js";
+import { checkSite, analyseHtml } from "./lib/check.js";
+import { scoreSite } from "./lib/score.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, "data");
 const DB_FILE = path.join(DATA_DIR, "reports.json");
 const PORT = process.env.PORT || 3000;
-const API_KEY = process.env.ANTHROPIC_API_KEY || "";
-const MODEL = "claude-sonnet-5-5";
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 if (!fs.existsSync(DB_FILE)) fs.writeFileSync(DB_FILE, "[]");
 
 const readDb = () => JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
 const writeDb = (rows) => fs.writeFileSync(DB_FILE, JSON.stringify(rows, null, 2));
-
-const SYSTEM = `You research niches for a freelance motion-graphics designer in India who wants paid clients abroad.
-His services: short product ads, vertical social ads, SaaS explainers, animated captions.
-Use web search to find CURRENT evidence. Output ONLY a JSON object, no prose, with this shape:
-{
-  "niche": string,
-  "plan": {
-    "whatTheyBuy": string,
-    "adSpendSignals": string,
-    "serviceFit": string,
-    "openingOffer": { "name": string, "priceUSD": string, "scope": string },
-    "risks": string[]
-  },
-  "research": {
-    "adData": string,
-    "market": string,
-    "rules": string,
-    "caveat": string
-  }
-}
-Rules: be specific and short. Only state facts you found. Say plainly when evidence is thin.
-Never suggest health, medical or results claims in ads. Mention local consent rules for cold outreach.
-Opening offer must be a small paid pilot, not a big package.`;
-
-async function liveResearch(niche, country) {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-api-key": API_KEY,
-      "anthropic-version": "2023-06-01"
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 4000,
-      system: SYSTEM,
-      tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 8 }],
-      messages: [
-        {
-          role: "user",
-          content: `Niche: ${niche}\nTarget country: ${country}\nResearch demand for short video ads in this niche and country, who buys, what they spend on, and how free ad data (Meta Ad Library, Google Ads Transparency) covers ${country}.`
-        }
-      ]
-    })
-  });
-  if (!res.ok) {
-    const t = await res.text();
-    throw new Error(`Claude API error ${res.status}: ${t.slice(0, 300)}`);
-  }
-  const data = await res.json();
-  const text = (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("\n");
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-  if (start < 0 || end < 0) throw new Error("The model did not return a report. Try again.");
-  const parsed = JSON.parse(text.slice(start, end + 1));
-
-  const sources = [];
-  const seen = new Set();
-  for (const b of data.content || []) {
-    if (b.type === "web_search_tool_result" && Array.isArray(b.content)) {
-      for (const r of b.content) {
-        if (r.url && !seen.has(r.url)) {
-          seen.add(r.url);
-          sources.push({ title: r.title || r.url, url: r.url });
-        }
-      }
-    }
-  }
-  return { mode: "live", niche: parsed.niche || niche, country, plan: parsed.plan, research: parsed.research, sources: sources.slice(0, 12) };
-}
 
 const app = express();
 app.use(express.json());
@@ -99,14 +27,7 @@ app.use(express.static(path.join(__dirname, "public")));
 const DEMO = process.env.SCOUT_DEMO === "1";
 
 app.get("/api/config", (_req, res) =>
-  res.json({
-    hasKey: Boolean(API_KEY),
-    hasMeta: Boolean((process.env.META_ACCESS_TOKEN || "").trim()),
-    demo: DEMO,
-    countries: COUNTRIES,
-    metaCountries: Object.keys(META_COUNTRIES),
-    statuses: STATUSES
-  })
+  res.json({ demo: DEMO, countries: COUNTRIES, coverage: coverage(), statuses: STATUSES })
 );
 
 app.get("/api/reports", (_req, res) => {
@@ -127,10 +48,10 @@ app.post("/api/research", async (req, res) => {
   if (!country) return res.status(400).json({ error: "Pick a country." });
 
   try {
-    let report = API_KEY ? await liveResearch(niche, country) : findSeed(niche, country);
+    const report = findSeed(niche, country);
     if (!report) {
       return res.status(422).json({
-        error: "Live research needs an API key. Add ANTHROPIC_API_KEY to the .env file and restart. Until then, try: supplements, skincare or pet."
+        error: "This niche has not been researched yet. Try supplements, skincare or pet, or ask Claude to research a new niche and add it to the repo."
       });
     }
     const row = { id: crypto.randomUUID(), createdAt: new Date().toISOString(), ...report };
@@ -143,40 +64,71 @@ app.post("/api/research", async (req, res) => {
   }
 });
 
-// ---- Phase 2: leads and scouts ----
+// ---- Phase 3: check brands, score them, keep the best ----
 
-// Only for screenshots and demos. Every demo lead is labelled DEMO so it can never be mistaken for a real one.
-function demoLeads(kind, niche, country) {
-  const base = { country, niche, source: "demo", contact: "", notes: "" };
-  return [
-    { ...base, company: "DEMO Glow Skincare", sourceId: `demo-1-${kind}`, sourceUrl: "https://example.com/demo-1", signal: kind === "meta" ? '6 active ads matching "' + niche + '", oldest running since 2026-08-12' : "Hiring: Freelance motion designer for product ads (posted 2026-10-10)", evidence: [{ label: "Demo link", url: "https://example.com/demo-1" }], sample: "Demo text only. Not a real company." },
-    { ...base, company: "DEMO Pawfect Foods", sourceId: `demo-2-${kind}`, sourceUrl: "https://example.com/demo-2", signal: kind === "meta" ? '3 active ads matching "' + niche + '"' : "Hiring: Short-form video editor for ecommerce ads", evidence: [{ label: "Demo link", url: "https://example.com/demo-2" }], sample: "Demo text only. Not a real company." },
-    { ...base, company: "DEMO Vital Greens", sourceId: `demo-3-${kind}`, sourceUrl: "https://example.com/demo-3", signal: kind === "meta" ? '1 active ad matching "' + niche + '"' : "Hiring: Ad creative designer, monthly retainer", evidence: [{ label: "Demo link", url: "https://example.com/demo-3" }], sample: "Demo text only. Not a real company." }
-  ];
+// Only for screenshots when the sandbox cannot reach real sites. Every lead is labelled DEMO.
+const DEMO_HTML = [
+  `<script src="https://connect.facebook.net/en_US/fbevents.js"></script><script>fbq('init','1')</script><script src="https://analytics.tiktok.com/i18n/pixel/events.js"></script><a href="https://instagram.com/demo">ig</a><p>Free shipping on bundles</p><a href="mailto:hello@demo-glow.example">mail</a><script src="https://cdn.shopify.com/s/x.js"></script><script src="https://static.klaviyo.com/a.js"></script>`,
+  `<script>fbq('track','PageView')</script><video src="a.mp4"></video><iframe src="https://www.youtube.com/embed/x"></iframe><a href="https://instagram.com/demo2">ig</a>`,
+  `<h1>Welcome</h1><p>Our story</p>`
+];
+
+function toLead({ brand, niche, check, demo }) {
+  const sc = scoreSite(check);
+  const base = {
+    company: demo ? `DEMO ${brand.name}` : brand.name,
+    country: brand.country,
+    niche,
+    source: demo ? "demo" : "site",
+    sourceId: brand.domain,
+    sourceUrl: `https://${brand.domain}`,
+    evidence: [{ label: "Their website", url: `https://${brand.domain}` }, { label: "Where the brand was listed", url: brand.source }],
+    sample: demo ? "Demo text only. Not a real company." : "",
+    notes: "",
+    checkedAt: new Date().toISOString()
+  };
+  if (!sc) return { ...base, score: null, scoreMax: 8, reasons: [], unreachable: true, contact: "", signal: check?.reason || "Could not check this website." };
+  const parts = [sc.score >= 5 ? "Strong fit" : sc.score >= 3 ? "Possible fit" : "Weak fit", `${check.pixels.length ? "runs " + check.pixels.join(" + ") + " tracking" : "no ad tracking"}`, check.videos === 0 ? "no homepage video" : `${check.videos} homepage video${check.videos > 1 ? "s" : ""}`];
+  return { ...base, score: sc.score, scoreMax: sc.max, reasons: sc.reasons, unreachable: false, contact: check.emails[0] || "", signal: parts.join(", ") };
+}
+
+async function pool(items, limit, fn) {
+  const out = new Array(items.length);
+  let next = 0;
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (next < items.length) {
+      const i = next++;
+      out[i] = await fn(items[i]);
+    }
+  }));
+  return out;
 }
 
 app.get("/api/leads", (_req, res) => res.json(readLeads().reverse()));
 
 app.post("/api/scout", async (req, res) => {
-  const kind = req.body?.kind;
   const niche = String(req.body?.niche || "").trim().slice(0, 120);
   const country = COUNTRIES.includes(req.body?.country) ? req.body.country : null;
-  if (!["meta", "hiring"].includes(kind)) return res.status(400).json({ error: "Pick a source." });
-  if (!niche) return res.status(400).json({ error: "Type a niche first." });
+  if (!niche) return res.status(400).json({ error: "Pick a niche first." });
   if (!country) return res.status(400).json({ error: "Pick a country." });
 
+  const { key, brands } = brandsFor(niche, country);
+  if (!key) return res.status(422).json({ error: "No brand list for this niche yet. Ask Claude to research it and add it to the repo." });
+  if (!brands.length) return res.status(422).json({ error: `No brands researched for ${country} in this niche yet. Germany and United States are ready.` });
+
   try {
-    const found = DEMO
-      ? demoLeads(kind, niche, country)
-      : kind === "meta"
-        ? await scoutMeta({ niche, country })
-        : await scoutHiring({ niche, country, apiKey: API_KEY });
-    const { added, duplicates } = addLeads(found);
-    res.json({ found: found.length, added, duplicates });
+    const found = await pool(brands, 3, async (brand) => {
+      const i = brands.indexOf(brand);
+      const check = DEMO
+        ? { reachable: true, ...analyseHtml(DEMO_HTML[i % DEMO_HTML.length], brand.domain) }
+        : await checkSite(brand.domain);
+      return toLead({ brand, niche: key, check, demo: DEMO });
+    });
+    const { added, updated } = addLeads(found);
+    res.json({ found: found.length, added, updated, unreachable: found.filter((l) => l.unreachable).length });
   } catch (err) {
-    if (err instanceof ScoutError) return res.status(err.status).json({ error: err.message });
     console.error("scout failed:", err.name, err.message);
-    res.status(500).json({ error: "Something went wrong while searching. Try again." });
+    res.status(500).json({ error: "Something went wrong while checking. Try again." });
   }
 });
 
@@ -190,4 +142,4 @@ app.patch("/api/leads/:id", (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Client finder running on http://localhost:${PORT}  (live research: ${API_KEY ? "on" : "off, sample niches only"})`));
+app.listen(PORT, () => console.log(`Client finder running on http://localhost:${PORT}  (free mode: no paid keys)`));

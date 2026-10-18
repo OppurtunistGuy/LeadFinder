@@ -13,20 +13,16 @@
       <a href="/">Research</a>
       <a href="/leads.html" aria-current="page">Leads</a>
     </nav>
-    <div class="phase">Scout and lead list</div>
+    <div class="phase">Check, score and list</div>
   </header>
 
   <main class="leads-layout">
     <form id="form" class="card search">
-      <label for="niche">Find leads in which niche?</label>
+      <label for="niche">Check brands in which niche?</label>
       <div class="row">
-        <input id="niche" type="text" placeholder="e.g. skincare" autocomplete="off" maxlength="120" required />
+        <select id="niche" aria-label="Niche"></select>
         <select id="country" aria-label="Country"></select>
-        <select id="kind" aria-label="Where to look">
-          <option value="hiring">Hiring posts (any country)</option>
-          <option value="meta">Meta ads (UK, Germany, Europe)</option>
-        </select>
-        <button id="go" type="submit">Find leads</button>
+        <button id="go" type="submit">Check brands</button>
       </div>
       <p id="hint" class="hint"></p>
       <p id="msg" class="notice" role="status" hidden></p>
@@ -38,7 +34,7 @@
       <select id="filter" aria-label="Filter by status"></select>
     </div>
     <div id="list" class="lead-list"></div>
-    <p id="empty" class="muted center">No leads yet. Pick a niche above and press <b>Find leads</b>.</p>
+    <p id="empty" class="muted center">No leads yet. Pick a niche above and press <b>Check brands</b>.</p>
   </main>
 
   <script src="/common.js"></script>
