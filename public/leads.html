@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Leads - Client Finder</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="brand">Client Finder</div>
+    <nav class="nav" aria-label="Pages">
+      <a href="/">Research</a>
+      <a href="/leads.html" aria-current="page">Leads</a>
+    </nav>
+    <div class="phase">Scout and lead list</div>
+  </header>
+
+  <main class="leads-layout">
+    <form id="form" class="card search">
+      <label for="niche">Find leads in which niche?</label>
+      <div class="row">
+        <input id="niche" type="text" placeholder="e.g. skincare" autocomplete="off" maxlength="120" required />
+        <select id="country" aria-label="Country"></select>
+        <select id="kind" aria-label="Where to look">
+          <option value="hiring">Hiring posts (any country)</option>
+          <option value="meta">Meta ads (UK, Germany, Europe)</option>
+        </select>
+        <button id="go" type="submit">Find leads</button>
+      </div>
+      <p id="hint" class="hint"></p>
+      <p id="msg" class="notice" role="status" hidden></p>
+      <p id="error" class="error" role="alert" hidden></p>
+    </form>
+
+    <div class="list-head">
+      <h2 id="count">Leads</h2>
+      <select id="filter" aria-label="Filter by status"></select>
+    </div>
+    <div id="list" class="lead-list"></div>
+    <p id="empty" class="muted center">No leads yet. Pick a niche above and press <b>Find leads</b>.</p>
+  </main>
+
+  <script src="/common.js"></script>
+  <script src="/leads.js"></script>
+</body>
+</html>

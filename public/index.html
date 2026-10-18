@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Client Finder</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="brand">Client Finder</div>
+    <nav class="nav" aria-label="Pages">
+      <a href="/" aria-current="page">Research</a>
+      <a href="/leads.html">Leads</a>
+    </nav>
+    <div class="phase">Niche plan and research</div>
+  </header>
+
+  <main class="layout">
+    <section class="main">
+      <form id="form" class="card search">
+        <label for="niche">Which niche?</label>
+        <div class="row">
+          <input id="niche" name="niche" type="text" placeholder="e.g. skincare brands" autocomplete="off" maxlength="120" required />
+          <select id="country" name="country" aria-label="Country"></select>
+          <button id="go" type="submit">Research it</button>
+        </div>
+        <p id="hint" class="hint"></p>
+        <p id="error" class="error" role="alert" hidden></p>
+      </form>
+
+      <div id="empty" class="empty">
+        <h2>Type a niche to begin</h2>
+        <p>You get a plan for the niche, then the research behind it, with sources. Try <b>supplements</b>, <b>skincare</b> or <b>pet</b>.</p>
+      </div>
+
+      <article id="report" hidden></article>
+    </section>
+
+    <aside class="side">
+      <h3>Past research</h3>
+      <ul id="history" class="history"></ul>
+      <p id="historyEmpty" class="muted">Nothing yet.</p>
+    </aside>
+  </main>
+
+  <script src="/common.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

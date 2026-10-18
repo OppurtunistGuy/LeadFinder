@@ -1,0 +1,14 @@
+{
+  "name": "client-finder",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Foreign client finder - Phase 1: niche box, niche plan and research report",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "test": "node --test tests/scout.test.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
